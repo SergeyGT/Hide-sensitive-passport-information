@@ -4,6 +4,10 @@ import argparse
 import math
 import pytesseract
 
+from flask import Flask, request, render_template, url_for
+import os
+
+
 # # Вычисляет координаты текстовых блоков и добавляет их в списки rects и confidences.
 # # @param scores: Содержит вероятности наличия текста в каждой ячейке сетки (feature map).
 # # @param geometry: Содержит координаты и размеры предсказанных текстовых блоков.
@@ -340,7 +344,28 @@ if __name__ == "__main__":
 
 
 
-
+# Сайт
+# app = Flask(__name__)
+# app.config['UPLOAD_FOLDER'] = 'uploads'  # Папка для сохранения загруженных файлов
+#
+# @app.route('/')
+# def upload_form():
+#     return render_template('index.html')
+#
+# @app.route('/upload', methods=['POST'])
+# def upload_file():
+#     if 'photo' not in request.files:
+#         return 'Файл не выбран'
+#     photo = request.files['photo']
+#     if photo.filename == '':
+#         return 'Файл не выбран'
+#     if photo:
+#         filename = photo.filename
+#         photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+#         return render_template('index.html', filename=filename)
+#
+# if __name__ == '__main__':
+#     app.run(debug=True)
 
 
 
