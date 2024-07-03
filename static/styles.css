@@ -62,6 +62,7 @@ body::-webkit-scrollbar-thumb {
             overflow: hidden;
             border-right: 0.15em solid black;
             white-space: nowrap;
+            color: #fff;
             margin: 0 auto;
             animation: typing 4s steps(30, end), blink-caret 0.75s step-end infinite;
         }
@@ -91,6 +92,6 @@ body::-webkit-scrollbar-thumb {
 
         .typewriter:hover::after {
             content: '';
-            animation: typing 4s steps(30, end), blink-caret 0.75s step-end infinite;
+            animation: typing 5s steps(30, end), blink-caret 0.75s step-end infinite;
             animation-play-state: running;
         }
