@@ -1,0 +1,96 @@
+body.animated-bg {
+    background: linear-gradient(135deg, rgba(255, 253, 208, 0.5) 25%, rgba(154, 210, 245, 0.5) 25%, rgba(154, 210, 245, 0.5) 50%, rgba(255, 253, 208, 0.5) 50%, rgba(255, 253, 208, 0.5) 75%, rgba(154, 210, 245, 0.5) 75%, rgba(154, 210, 245, 0.5) 100%);
+    background-size: 56.57px 56.57px;
+    animation: move-bg 20s linear infinite;
+}
+
+@keyframes move-bg {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 56.57px 56.57px;
+    }
+}
+
+/* Custom scrollbar styles */
+body::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+body::-webkit-scrollbar-track {
+    background: rgba(255, 253, 208, 0.5);
+    border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: rgba(154, 210, 245, 0.8);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 253, 208, 0.5);
+    animation: thumb-animation 1s linear infinite;
+}
+
+@keyframes thumb-animation {
+    0% {
+        background: rgba(154, 210, 245, 0.8);
+    }
+    50% {
+        background: rgba(154, 210, 245, 0.5);
+    }
+    100% {
+        background: rgba(154, 210, 245, 0.8);
+    }
+}
+
+
+/* Animation for the image */
+.animated-img {
+    opacity: 0;
+    animation: fadeIn 3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+        /* Эффект печати */
+        .typewriter {
+            display: inline-block;
+            overflow: hidden;
+            border-right: 0.15em solid black;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typing 4s steps(30, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink-caret {
+            from, to {
+                border-color: transparent;
+            }
+            50% {
+                border-color: black;
+            }
+        }
+
+
+        .typewriter:hover {
+            animation-play-state: running;
+        }
+
+        .typewriter:hover::after {
+            content: '';
+            animation: typing 4s steps(30, end), blink-caret 0.75s step-end infinite;
+            animation-play-state: running;
+        }
