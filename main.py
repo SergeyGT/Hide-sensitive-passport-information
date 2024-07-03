@@ -261,8 +261,8 @@ if __name__ == "__main__":
         print("Using GPU device")
 
     # Create a new named window
-    kWinName = "EAST: An Efficient and Accurate Scene Text Detector"
-    cv.namedWindow(kWinName, cv.WINDOW_NORMAL)
+    kWinName = "Blur photos"
+    # cv.namedWindow(kWinName, cv.WINDOW_NORMAL)
     outputLayers = []
     outputLayers.append("feature_fusion/Conv_7/Sigmoid")
     outputLayers.append("feature_fusion/concat_3")
@@ -318,7 +318,7 @@ if __name__ == "__main__":
             roi = frame[int(y1):int(y2), int(x1):int(x2)]
 
             # Применяем размытие с использованием гауссова фильтра
-            blurred_roi = cv.GaussianBlur(roi, (35, 35), 0)
+            blurred_roi = cv.GaussianBlur(roi, (45, 45), 0)
 
             # Заменяем область с текстом на размытую версию
             frame[int(y1):int(y2), int(x1):int(x2)] = blurred_roi
@@ -331,12 +331,12 @@ if __name__ == "__main__":
 
 
         # Put efficiency information
-        cv.putText(frame, label, (0, 15), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
+        # cv.putText(frame, label, (0, 15), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
 
 
         # Display the frame
-        cv.imshow(kWinName,frame)
-        cv.imwrite("output.png",frame)
+        # cv.imshow(kWinName, frame)
+        cv.imwrite("output.jpg", frame)
 
 
 
