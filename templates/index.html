@@ -6,14 +6,65 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <title>BlurPass</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Additional custom styles */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        header {
+            background-color: #9ad2f5;
+            color: #fff;
+            padding: 10px 0;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .rounded-3 {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #9ad2f5;
+            color: #fff;
+            margin-top: 20px;
+        }
+    </style>
+  <title>BlurPass</title>
 </head>
-<body>
+<body class="animated-bg">
 <main>
   <div class="container py-4">
     <header class="pb-3 mb-4 border-bottom">
-      <a href="/" class="d-flex align-items-center text-body-emphasis text-decoration-none">
-        <span class="fs-4">BlurPass</span>
+      <a href="/" class="text-body-emphasis text-decoration-none">
+        <span class="fs-4 typewriter">BlurPass</span>
       </a>
     </header>
 
@@ -23,39 +74,23 @@
         <p class="col-md-8 fs-4">Выберите фотографию паспорта без разворота, на который вы хотите скрыть конфиденциальную информацию</p>
       </div>
 
-        <form method="POST" enctype="multipart/form-data" action="/upload" >
-         <input class="btn btn-primary btn-lg" type="file" name="photo" accept="image/*">
+      <form method="POST" enctype="multipart/form-data" action="/upload">
+        <input class="btn btn-primary btn-lg" type="file" name="photo" accept="image/*">
         <br><br>
-        <input type="submit" value="Загрузить">
-        </form>
+        <input type="submit" value="Загрузить" class="btn btn-primary">
+      </form>
 
-
-    </div>
       {% if filename %}
-        <img src="{{ url_for('static', filename='uploads/' + filename) }}" style="max-width: 300px; max-height: 300px;">
+      <div class="mt-4">
+        <h2>Обработанное изображение:</h2>
+        <img src="{{ url_for('uploaded_file', filename=filename) }}" class="animated-img" style="max-width: 300px; max-height: 300px;" alt="Processed Image">
+      </div>
       {% endif %}
 
-
-<!--    <div class="row align-items-md-stretch">-->
-<!--      <div class="col-md-6">-->
-<!--        <div class="h-100 p-5 text-bg-dark rounded-3">-->
-<!--          <h2>Change the background</h2>-->
-<!--          <p>Swap the background-color utility and add a `.text-*` color utility to mix up the jumbotron look. Then, mix and match with additional component themes and more.</p>-->
-<!--          <button class="btn btn-outline-light" type="button">Example button</button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="col-md-6">-->
-<!--        <div class="h-100 p-5 bg-body-tertiary border rounded-3">-->
-<!--          <h2>Add borders</h2>-->
-<!--          <p>Or, keep it light and add a border for some added definition to the boundaries of your content. Be sure to look under the hood at the source HTML here as we've adjusted the alignment and sizing of both column's content for equal-height.</p>-->
-<!--          <button class="btn btn-outline-secondary" type="button">Example button</button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-
     <footer class="pt-3 mt-4 text-body-secondary border-top">
-      © 2024
+      © ШБШ 2024
     </footer>
+  </div>
   </div>
 </main>
 </body>
