@@ -4,160 +4,6 @@ import argparse
 import math
 import pytesseract
 
-from flask import Flask, request, render_template, url_for
-import os
-
-
-# # Вычисляет координаты текстовых блоков и добавляет их в списки rects и confidences.
-# # @param scores: Содержит вероятности наличия текста в каждой ячейке сетки (feature map).
-# # @param geometry: Содержит координаты и размеры предсказанных текстовых блоков.
-# # @param scoreThresh: Порог уверенности, ниже которого предсказания игнорируются.
-# def decode(scores, geometry, scoreThresh):
-#     # Определение размеров scores (numRows) и geometry (numCols)
-#     numRows, numCols = scores.shape[2:4]
-#
-#     # Пустые списки для хранения координат прямоугольников и уверенностей
-#     rects = []
-#     confidences = []
-#
-#     # Цикл по строкам сетки
-#     for y in range(numRows):
-#         # Извлечение данных вероятностей текста для текущей строки
-#         scoresData = scores[0, 0, y]
-#
-#         # Извлечение данных геометрии для текущей строки
-#         xData0 = geometry[0, 0, y]
-#         xData1 = geometry[0, 1, y]
-#         xData2 = geometry[0, 2, y]
-#         xData3 = geometry[0, 3, y]
-#         anglesData = geometry[0, 4, y]
-#
-#         # Цикл по столбцам сетки
-#         for x in range(numCols):
-#             # Получение уверенности (score) для текущей ячейки
-#             score = scoresData[x]
-#
-#             # Проверка, превышает ли уверенность порог scoreThresh
-#             if score < scoreThresh:
-#                 continue  # Пропустить текущую ячейку, если уверенность ниже порога
-#
-#             # Вычисление смещений относительно начала координат
-#             offsetX = x * 4.0
-#             offsetY = y * 4.0
-#
-#             # Извлечение угла поворота текстового блока
-#             angle = anglesData[x]
-#             cos = np.cos(angle)
-#             sin = np.sin(angle)
-#
-#             # Вычисление высоты и ширины текстового блока
-#             h = xData0[x] + xData2[x]
-#             w = xData1[x] + xData3[x]
-#
-#             # Вычисление координат прямоугольника
-#             endX = int(offsetX + (cos * xData1[x]) + (sin * xData2[x]))
-#             endY = int(offsetY - (sin * xData1[x]) + (cos * xData2[x]))
-#             startX = int(endX - w)
-#             startY = int(endY - h)
-#
-#             # Добавление координат и уверенности в соответствующие списки
-#             rect = ((offsetX, offsetY), (w, h), -angle * 180.0 / np.pi)
-#             rects.append(rect)
-#             confidences.append(float(score))
-#
-#     # Возвращение списка координат прямоугольников и списка уверенностей
-#     return rects, confidences
-#
-#
-# if __name__ == "__main__":
-#     # # Парсинг аргументов командной строки
-#     # parser = argparse.ArgumentParser(description='Text detection using EAST model')
-#     # parser.add_argument('image', help='Path to input image')
-#     # args = parser.parse_args()
-#
-#     # Загрузка модели
-#     net = cv2.dnn.readNet("frozen_east_text_detection.pb")
-#
-#     # # Путь к изображению
-#     # image_path = args.image
-#
-#     # Путь к изображению
-#     image_path = "C:\\Users\\Acer\\PycharmProjects\\tensorflow_project\\pass.jpg"
-#
-#     # # Загрузка изображения
-#     # frame = cv2.imread(image_path)
-#
-#     # # Путь к изображению
-#     # image_path = args.image
-#
-#     # Чтение изображения с помощью OpenCV
-#     frame = cv2.imread(image_path)
-#     # if frame is None:
-#     #     print(f"Error: Could not open or find the image '{image_path}'")
-#     #     exit()
-#
-#     # Размеры входного изображения (ПЕРЕДАВАТЬ ЧЕРЕЗ АРГУМЕНТЫ?)
-#     inpWidth = 320
-#     inpHeight = 320
-#
-#     # Создание блоба из изображения
-#     # 1 параметр - само изображение
-#     # 2 - масштабирование пикселей - обычно 1.0
-#     # 3 - размеры изображения
-#     # 4 -усреднение пикселей - не особо понял
-#     # 5 - имеются 3 слоя(RGB) true -  меняет каналы местами R и B
-#     blob = cv2.dnn.blobFromImage(frame, 1.0, (inpWidth, inpHeight), (123.68, 116.78, 103.94), True, False)
-#
-#
-#     #### Передаем входные данные через сеть и получаем выходные результаты
-#     # Установим входные данные для сети
-#     net.setInput(blob)
-#
-#     # Определим выходные слои
-#     outputLayers = ["feature_fusion/Conv_7/Sigmoid", "feature_fusion/concat_3"]
-#
-#     # Выполним прямой проход через сеть
-#     output = net.forward(outputLayers)
-#
-#     # Разделим выход на оценки и геометрию
-#     scores = output[0]
-#     geometry = output[1]
-#
-#     # Порог уверенности
-#     confThreshold = 0.8
-#
-#     # Декодирование предсказаний
-#     boxes, confidences = decode(scores, geometry, confThreshold)
-#
-#     # Порог для немаксимального подавления
-#     nmsThreshold = 0.3
-#
-#     # Применение немаксимального подавления
-#     indices = cv2.dnn.NMSBoxesRotated(boxes, confidences, confThreshold, nmsThreshold)
-#
-#     # # Рисование результатов на изображении
-#     # for i in indices:
-#     #     (startX, startY, endX, endY) = boxes[i[0]]
-#     #     cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
-#
-#     # Прорисовка прямоугольников на изображении
-#     for i in indices:
-#         box = cv2.boxPoints(boxes[i])
-#         box = np.int32(box)
-#         cv2.drawContours(frame, [box], 0, (0, 255, 0), 2)
-#
-#
-#     # Показать результирующее изображение
-#     cv2.imshow("Text Detection", frame)
-#
-#     # Сохранение изображения с выделенными текстовыми областями
-#     output_image_path = "output_detected_text.jpg"
-#     cv2.imwrite(output_image_path, frame)
-#     print(f"Результат сохранен в файл: {output_image_path}")
-#
-#
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
 
 parser = argparse.ArgumentParser(description='Use this script to run text detection deep learning networks using OpenCV.')
 # Input argument
@@ -167,15 +13,15 @@ parser.add_argument('--model', default="frozen_east_text_detection.pb",
                     help='Path to a binary .pb file of model contains trained weights.'
                     )
 # Width argument
-parser.add_argument('--width', type=int, default=320,
+parser.add_argument('--width', type=int, default=1024,
                     help='Preprocess input image by resizing to a specific width. It should be multiple by 32.'
                    )
 # Height argument
-parser.add_argument('--height',type=int, default=320,
+parser.add_argument('--height',type=int, default=1024,
                     help='Preprocess input image by resizing to a specific height. It should be multiple by 32.'
                    )
 # Confidence threshold
-parser.add_argument('--thr',type=float, default=0.5,
+parser.add_argument('--thr',type=float, default=0.7,
                     help='Confidence threshold.'
                    )
 # Non-maximum suppression threshold
@@ -245,7 +91,6 @@ def decode(scores, geometry, scoreThresh):
     # Return detections and confidences
     return [detections, confidences]
 
-
 if __name__ == "__main__":
     # Read and store arguments
     confThreshold = args.thr
@@ -281,14 +126,26 @@ if __name__ == "__main__":
             cv.waitKey()
             break
 
+        # # Get frame height and width
+        # height_ = frame.shape[0]
+        # width_ = frame.shape[1]
+        # rW = width_ / float(inpWidth)
+        # rH = height_ / float(inpHeight)
+
+        # Convert frame to grayscale
+        gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        gray_frame = cv.cvtColor(gray_frame, cv.COLOR_GRAY2BGR)
+
+        cv.imshow(kWinName, gray_frame)
+
         # Get frame height and width
-        height_ = frame.shape[0]
-        width_ = frame.shape[1]
+        height_ = gray_frame.shape[0]
+        width_ = gray_frame.shape[1]
         rW = width_ / float(inpWidth)
         rH = height_ / float(inpHeight)
 
         # Create a 4D blob from frame.
-        blob = cv.dnn.blobFromImage(frame, 1.0, (inpWidth, inpHeight), (123.68, 116.78, 103.94), True, False)
+        blob = cv.dnn.blobFromImage(gray_frame, 1.0, (inpWidth, inpHeight), (123.68, 116.78, 103.94), True, False)
 
         # Run the model
         net.setInput(blob)
@@ -314,18 +171,36 @@ if __name__ == "__main__":
                 vertices[j][1] *= rH
             # Draw lines between the vertices to form the rectangle
 
-            # Вычисляем границы прямоугольника
-            x1, y1 = vertices[1]
-            x2, y2 = vertices[3]
+            # # Вычисляем границы прямоугольника
+            # x1, y1 = vertices[1]
+            # x2, y2 = vertices[3]
+            #
+            # # Вырезаем область с текстом из кадра
+            # roi = frame[int(y1):int(y2), int(x1):int(x2)]
+            #
+            # # Применяем размытие с использованием гауссова фильтра
+            # blurred_roi = cv.GaussianBlur(roi, (45, 45), 0)
+            #
+            # # Заменяем область с текстом на размытую версию
+            # frame[int(y1):int(y2), int(x1):int(x2)] = blurred_roi
 
-            # Вырезаем область с текстом из кадра
-            roi = frame[int(y1):int(y2), int(x1):int(x2)]
+            # Calculate the boundaries of the rectangle
+            x1, y1 = int(vertices[1][0]), int(vertices[1][1])
+            x2, y2 = int(vertices[3][0]), int(vertices[3][1])
 
-            # Применяем размытие с использованием гауссова фильтра
-            blurred_roi = cv.GaussianBlur(roi, (45, 45), 0)
+            # Ensure the coordinates are within the image bounds
+            x1 = max(0, min(x1, frame.shape[1] - 1))
+            x2 = max(0, min(x2, frame.shape[1] - 1))
+            y1 = max(0, min(y1, frame.shape[0] - 1))
+            y2 = max(0, min(y2, frame.shape[0] - 1))
 
-            # Заменяем область с текстом на размытую версию
-            frame[int(y1):int(y2), int(x1):int(x2)] = blurred_roi
+            # Cut out the region with the text from the original frame
+            roi = frame[y1:y2, x1:x2]
+
+            if roi.size != 0:  # Check if the ROI is not empty
+                # Apply median blur
+                blurred_roi = cv.medianBlur(roi, 45)
+                frame[y1:y2, x1:x2] = blurred_roi
 
 
             for j in range(4):
@@ -334,40 +209,9 @@ if __name__ == "__main__":
                 cv.line(frame, p1, p2, (206, 212, 210), 1, cv.LINE_AA)
 
 
-        # Put efficiency information
-        # cv.putText(frame, label, (0, 15), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
-
-
         # Display the frame
         # cv.imshow(kWinName, frame)
         cv.imwrite("output.jpg", frame)
-
-
-
-# Сайт
-# app = Flask(__name__)
-# app.config['UPLOAD_FOLDER'] = 'uploads'  # Папка для сохранения загруженных файлов
-#
-# @app.route('/')
-# def upload_form():
-#     return render_template('index.html')
-#
-# @app.route('/upload', methods=['POST'])
-# def upload_file():
-#     if 'photo' not in request.files:
-#         return 'Файл не выбран'
-#     photo = request.files['photo']
-#     if photo.filename == '':
-#         return 'Файл не выбран'
-#     if photo:
-#         filename = photo.filename
-#         photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#         return render_template('index.html', filename=filename)
-#
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-
 
 
 
